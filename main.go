@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"reflect"
+	"time"
 )
 
 type T struct {
@@ -11,17 +11,19 @@ type T struct {
 }
 
 func main() {
-	t := reflect.TypeOf(T{})
-	x := t.Field(0).Tag
-	y := t.Field(1).Tag
-	z := t.Field(2).Tag
+	now := time.Now()
+	notify := make(chan struct{})
 
-	fmt.Println(x, y, z)
-	fmt.Println(reflect.TypeOf(x))
-	v, present := x.Lookup("max")
-	fmt.Println(len(v), present, v)
-	fmt.Println(x.Get("max"))
-	fmt.Println(x.Lookup("optional"))
-	fmt.Println(y.Lookup("optional"))
-	fmt.Println(z.Lookup("optional"))
+	go func() {
+		<-notify
+		fmt.Println("since: ", time.Since(now))
+	}()
+	go func() {
+		<-notify
+		fmt.Println("since: ", time.Since(now))
+	}()
+
+	time.Sleep(time.Second)
+	close(notify)
+	time.Sleep(time.Second)
 }
