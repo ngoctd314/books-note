@@ -1,13 +1,24 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func main() {
-	var data int
+	now := time.Now()
+	notify := make(chan struct{})
+
 	go func() {
-		data++
+		<-notify
+		fmt.Println("since: ", time.Since(now))
 	}()
-	if data == 0 {
-		fmt.Printf("the value is %v\n", data)
-	}
+	go func() {
+		<-notify
+		fmt.Println("since: ", time.Since(now))
+	}()
+
+	time.Sleep(time.Second)
+	close(notify)
+	time.Sleep(time.Second)
 }
