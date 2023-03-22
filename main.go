@@ -1,29 +1,30 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"runtime"
+	"sync"
 	"time"
 )
 
-type T struct {
-	X    int  `max:"99" min:"0" default:"0"`
-	Y, Z bool `optional:"yes"`
-}
-
 func main() {
 	now := time.Now()
-	notify := make(chan struct{})
 
-	go func() {
-		<-notify
-		fmt.Println("since: ", time.Since(now))
-	}()
-	go func() {
-		<-notify
-		fmt.Println("since: ", time.Since(now))
-	}()
+	runtime.GOMAXPROCS(12)
+	wg := sync.WaitGroup{}
+	n := 24
+	wg.Add(n)
+	for i := 0; i < n; i++ {
+		go func() {
+			defer wg.Done()
+			simulateWorkload()
+		}()
+	}
+	wg.Wait()
+	log.Println("since: ", time.Since(now))
+}
 
-	time.Sleep(time.Second)
-	close(notify)
-	time.Sleep(time.Second)
+func simulateWorkload() {
+	for i := 0; i < 1e9; i++ {
+	}
 }

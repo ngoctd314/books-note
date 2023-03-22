@@ -108,3 +108,69 @@ Synchronizing access to the memory in this manner also has performance ramifacti
 **Deadlock**
 
 A deadlocked program is one i which all concurrent processes are waiting on one another. In this state, the program will never recover without outside intervention.
+
+```go
+func main() {
+	m1 := sync.Mutex{}
+	m2 := sync.Mutex{}
+	wg := sync.WaitGroup{}
+
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		m1.Lock()
+		defer m1.Unlock()
+
+		time.Sleep(time.Second)
+
+		m2.Lock()
+		defer m2.Unlock()
+	}()
+
+	go func() {
+		defer wg.Done()
+		m2.Lock()
+		defer m2.Unlock()
+
+		time.Sleep(time.Second)
+
+		m1.Lock()
+		defer m1.Unlock()
+	}()
+
+	wg.Wait()
+}
+```
+
+Coffman Condition
+Mutual Exclusion: A concurrent process holds exclusive rights to a resource at any one time.
+Wait For Condition: A concurrent process must simultaneously hold a resource and be waiting for an additional resource.
+No Preemption: A resources held by a concurrent process can only be released by that process.
+Circular Wait: A concurrent process (P1) must be waiting on a chain of other concurrent process (P2), which are in turn waiting on it (P1).
+
+The laws allow us to prevent deadlocks too. If we ensure that at least one of these conditions is not true, we can prevent deadlocks from occurring.
+
+**Live lock**
+
+Livelocks are programs that are actively performing concurrent operations, but these operations do nothing to move the state of the program forward.
+
+**Starvation**
+
+Starvation is any situation where a concurrent process cannot get all the resources it needs to perform work.
+
+## Chapter 2. Modeling Your Code: Communicating Sequential Processes.
+
+**What is CSP?**
+
+## Chapter 3: Go's Concurrency Building Blocks
+
+What's happening behind the scenes here: how do goroutines actually work? Are they OS threads? Green threads? How many can we create?
+
+Goroutines are unique to Go, they're not OS threads, and they're not exactly green threads - threads that are managed by a language's runtime - they're a higher level of abstraction known as coroutines. Coroutines are simply concurrent subroutines (function, closure, or methods in Go).
+
+### The GOMAXPROCS Lever
+
+In the runtime package, there is a function GOMAXPROCS. The name is misleading: people often think this function relates to the number of logical processors on the host machine but really this function controls the number of OS threads that will host so-called "work queues".
+
+
+## Chapter 4: Concurrency Patterns in Go
