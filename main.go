@@ -6,19 +6,20 @@ import (
 )
 
 func main() {
-	now := time.Now()
-	notify := make(chan struct{})
-
+	ch := make(chan struct{}, 1)
+	// consume
 	go func() {
-		<-notify
-		fmt.Println("since: ", time.Since(now))
-	}()
-	go func() {
-		<-notify
-		fmt.Println("since: ", time.Since(now))
+		for range ch {
+			time.Sleep(time.Second)
+			fmt.Println("consume")
+			<-ch
+		}
 	}()
 
-	time.Sleep(time.Second)
-	close(notify)
-	time.Sleep(time.Second)
+	for i := 0; i < 100; i++ {
+		fmt.Println("send")
+		ch <- struct{}{}
+	}
+
+	time.Sleep(time.Minute)
 }
