@@ -174,3 +174,70 @@ In the runtime package, there is a function GOMAXPROCS. The name is misleading: 
 
 
 ## Chapter 4: Concurrency Patterns in Go
+
+### Confinement
+
+When working with concurrent code, there are a few different options for safe operation. We've gone over two of them:
+- Synchronization primitives for sharing memory (sync.Mutex)
+- Synchronization via communicating (channels)
+
+However, there are a couple of other options that are implicitly safe within multiple concurrent processes:
+- Immutable data
+- Data protected by confinement
+
+In some sense, immutable data is ideal because it is implicitly concurrent-safe. Each concurrent process may operate on the same data, but it may not modify it. If it wants to create new data, it must create a new copy of the data with the desired modification.
+
+Confinement can also allow for a lighter cognitive load on the developer and smaller critical sections. The techniques to confine concurrent values are a bit more involved than simply passing copies of values. Confinement  is the simple yet powerful idea of ensuring information is only ever available from one concurrent process. When this is achieved, a concurrent program is implicitly safe and no synchronization is needed. There are two kinds of confinement possible: ad hoc and lexical.
+
+```go
+func main() {
+	data := make([]int, 4)
+	loopData := func(handleData chan<- int) {
+		defer close(handleData)
+		for i := range data {
+			handleData <- data[i]
+		}
+	}
+
+	handleData := make(chan int)
+	go loopData(handleData)
+
+	for num := range handleData {
+		fmt.Println(num)
+	}
+}
+```
+
+We can see that the data slice of integers is available from both the loopData function and the loop over the handleData channel; however, by convention we're only accessing it from the loopData function. But as the code is touched by many people, and deadlines loom, mistakes might be made, and the confinement might break down and cause issues.
+
+Lexical confinement involves using lexical scope to expose only the correct data and concurrency primitives for multiple concurrent processes to use. It makes it impossible to do the wrong thing.
+
+```go
+chanOwner := func() <-chan int {
+	// we instantiate the channel within the lexical scope of the channel within the lexical scope of the chanOwner function.
+	// This limits the scope of the write aspect of the results channel to the closure defined below it. In other words, it confines
+	// the write aspect of this channel to prevent other goroutines from writing it.
+	results := make(chan int, 5)
+	go func() {
+		defer close(results)
+		for i := 0; i < 5; i++ {
+			results <- i
+		}
+	}()
+
+	return results
+}
+// Here we receive a read-only copy of an int channel.
+// By declaring that we only usage we require is read access, we confine usage of the channel within the consume function to only reads.
+consumer := func(results <-chan int) {
+	for result := range results {
+		fmt.Printf("Received: %d\n", result)
+	}
+	fmt.Println("Done receiving")
+}
+
+// Here we receive the read aspect of the channel and we're able to pass it into the consumer, which can do nothing but read from it
+// Once again this confines the main goroutine to a read-only view of the channel
+results := chanOwner()
+consumer(results)
+```

@@ -1,30 +1,24 @@
 package main
 
-import (
-	"log"
-	"runtime"
-	"sync"
-	"time"
-)
+import "fmt"
 
 func main() {
-	now := time.Now()
-
-	runtime.GOMAXPROCS(12)
-	wg := sync.WaitGroup{}
-	n := 24
-	wg.Add(n)
-	for i := 0; i < n; i++ {
+	chanOnwer := func() <-chan int {
+		results := make(chan int)
 		go func() {
-			defer wg.Done()
-			simulateWorkload()
+			defer close(results)
+			for i := 0; i < 5; i++ {
+				results <- i
+			}
 		}()
+		return results
 	}
-	wg.Wait()
-	log.Println("since: ", time.Since(now))
-}
 
-func simulateWorkload() {
-	for i := 0; i < 1e9; i++ {
+	consumer := func(results <-chan int) {
+		for result := range results {
+			fmt.Println(result)
+		}
 	}
+
+	consumer(chanOnwer())
 }
