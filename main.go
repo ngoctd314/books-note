@@ -1,24 +1,32 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 func main() {
-	chanOnwer := func() <-chan int {
-		results := make(chan int)
-		go func() {
-			defer close(results)
-			for i := 0; i < 5; i++ {
-				results <- i
-			}
-		}()
-		return results
-	}
+}
 
-	consumer := func(results <-chan int) {
-		for result := range results {
-			fmt.Println(result)
-		}
-	}
+func incorrectSync() {
+	var (
+		x, y int
+		wg   sync.WaitGroup
+	)
 
-	consumer(chanOnwer())
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		x = 1
+		fmt.Print("y: ", y, " ")
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		y = 1
+		fmt.Print("x: ", x, " ")
+	}()
+
+	wg.Wait()
 }
