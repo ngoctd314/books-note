@@ -1,30 +1,32 @@
 package main
 
 import (
-	"log"
-	"runtime"
+	"fmt"
 	"sync"
-	"time"
 )
 
 func main() {
-	now := time.Now()
-
-	runtime.GOMAXPROCS(12)
-	wg := sync.WaitGroup{}
-	n := 24
-	wg.Add(n)
-	for i := 0; i < n; i++ {
-		go func() {
-			defer wg.Done()
-			simulateWorkload()
-		}()
-	}
-	wg.Wait()
-	log.Println("since: ", time.Since(now))
 }
 
-func simulateWorkload() {
-	for i := 0; i < 1e9; i++ {
-	}
+func incorrectSync() {
+	var (
+		x, y int
+		wg   sync.WaitGroup
+	)
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		x = 1
+		fmt.Print("y: ", y, " ")
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		y = 1
+		fmt.Print("x: ", x, " ")
+	}()
+
+	wg.Wait()
 }
