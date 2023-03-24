@@ -1286,10 +1286,15 @@ Unlike a switch statement where the first case with a match wins, the select sta
 
 ## 34. Being puzzled about a channel size
 
-## 
+## Not understanding CPU caches
 
 Make it correct, make it clear, make it concise, make it fast, in that order.
 
 **CPU architecture**
 
 Modern CPUs rely on caching to speed up memory access. In most cases, via three different caching levels: L1 64 KB, L2 256 KB, and L3, 4MB. Dividing a physical core into multiple logical cores is named in the Intel family as hyper-threading. Each physical core (core 0 and core 1) is divided into two logical cores. Regarding the L1 cache it's slit into two sub-caches: L1D for data and L1I for instructions (each of 32KB). 
+
+**Cache line**
+
+- The same location will be referenced again
+- Nearby memory locations will be referenced
