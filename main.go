@@ -1,32 +1,23 @@
 package main
 
-import (
-	"fmt"
-	"sync"
-)
+import "fmt"
 
 func main() {
+	fmt.Println((467191356 * 2.475) / (548031315 * 2.102))
 }
 
-func incorrectSync() {
-	var (
-		x, y int
-		wg   sync.WaitGroup
-	)
+func sum2(s []int64) int64 {
+	var total int64
+	for i := 0; i < len(s); i += 2 {
+		total += s[i]
+	}
+	return total
+}
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		x = 1
-		fmt.Print("y: ", y, " ")
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		y = 1
-		fmt.Print("x: ", x, " ")
-	}()
-
-	wg.Wait()
+func sum8(s []int64) int64 {
+	var total int64
+	for i := 0; i < len(s); i += 8 {
+		total += s[i]
+	}
+	return total
 }

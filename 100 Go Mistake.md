@@ -1295,6 +1295,25 @@ Make it correct, make it clear, make it concise, make it fast, in that order.
 Modern CPUs rely on caching to speed up memory access. In most cases, via three different caching levels: L1 64 KB, L2 256 KB, and L3, 4MB. Dividing a physical core into multiple logical cores is named in the Intel family as hyper-threading. Each physical core (core 0 and core 1) is divided into two logical cores. Regarding the L1 cache it's slit into two sub-caches: L1D for data and L1I for instructions (each of 32KB). 
 
 **Cache line**
+When a specific memory location is accessed (e.g reading a variable), it is likely that in the near future:
 
 - The same location will be referenced again
 - Nearby memory locations will be referenced
+
+The former refers to temporal locality, and the later refers to spatial locality. Both are part of a principle called locality of reference.
+
+```go
+func sum(s []int64) int64 {
+	var total int64
+	length := len(s)
+	for i := 0; i < length; i++ {
+		total += s[i]
+	}
+	return total
+}
+```
+In this example, temporal locality applies to multiple variables: i, length, and total. Indeed, throughout the iteration, we keep accessing the these variables. Furthermore, spatial locality applies to code instructions and the slice, s. Indeed, as a slice is backed by an array allocated contiguously in memory, in this example, accessing s[0] means also accessing s[1], s[2], etc.
+
+Temporal locality is part of why we need CPU caches: to speed up repeated accesses to the same variables. However, because of spatial locality, the CPU will copy what we call a cache line instead of copying a single variable from the main to memory to a cache.
+
+**Slice of structs vs struct of slices**
