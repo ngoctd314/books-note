@@ -2,41 +2,22 @@ package main
 
 import (
 	"fmt"
-	"runtime"
 )
 
+type person struct {
+	name string
+	age  int
+}
+
 func main() {
-	doWork := func(strings <-chan string) <-chan interface{} {
-		completed := make(chan interface{})
-		go func() {
-			defer fmt.Println("doWork exited")
-			defer close(completed)
-			for s := range strings {
-				// Do something interesting
-				fmt.Println(s)
-			}
-		}()
-
-		return completed
+	p1 := person{
+		name: "tdn",
+		age:  23,
 	}
-	doWork(nil) // block for ever (receiving value from nil channel)
-	// Perhaps more work is done here
-	fmt.Println("Done.")
-	fmt.Println(runtime.NumGoroutine())
-}
-
-func sum2(s []int64) int64 {
-	var total int64
-	for i := 0; i < len(s); i += 2 {
-		total += s[i]
+	p2 := person{
+		name: "tdn",
+		age:  23,
 	}
-	return total
-}
+	fmt.Println(p1 == p2)
 
-func sum8(s []int64) int64 {
-	var total int64
-	for i := 0; i < len(s); i += 8 {
-		total += s[i]
-	}
-	return total
 }
