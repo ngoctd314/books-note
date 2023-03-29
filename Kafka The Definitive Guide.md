@@ -1,10 +1,16 @@
-# 
+# Kafka The Definitive Guide
+
+## Chapter 1. Meet Kafka
+
+We've come to think of Kafka as a streaming platform: a system that lets you publish and subscribe to streams of data, store them, and process them, and that is exactly what Apache Kafka is built to be.
 
 There has been a huge gap in our infrastructure for data. Traditionally, data management was all about storage - the file stores and databases that keep our data safe and let us look up the right bit at the right time. A modern company is an incredibly complex system built out of hundreds or even thousands of custom applications, microservices, databases, SaaS layers and analytics platform.
 
-## Publish/Subscribe Messaging
+**Publish/Subscribe Messaging**
 
-Apache Kafka is often described as a "distributed commit log" or more recently as a "distributed streaming platform". Similary, data within Kafka is stored durably, in order, and can be read deterministically. In addition, the data can be distributed within the system to provide additional protections against failures.
+Publish/subscribe (pub/sub) messageing is a pattern that is characterized by the sender (publisher) of a piece of data (message) not specifically directing to a receiver. Instead, the publisher classifies the message somehow, and that receiver (subscriber) subscribes to receive certain classes of messages. Pub/sub systems often have a broker, a central point where messages are published to facilitate this pattern.
+
+Ví dụ bạn đem đơn hàng của bạn gửi ở một trung tâm kí gửi với một vài thông tin kí gửi, người nhận muốn nhận đơn hàng thì ra trung tâm và đưa thông tin kí gửi sau đó nhận hàng.
 
 **Messages and Batches**
 
