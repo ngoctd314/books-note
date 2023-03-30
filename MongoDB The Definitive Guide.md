@@ -44,6 +44,64 @@ But we dont do that :))
 
 In addition to grouping documents by collection, MongoDB groups collections into databases. A single instance of MongoDB can host several databases. A good rule of thumb is to store all data for a single application in the same database.
 
+There are also some reserved database names, which you can access but which have special semantics. There are as follows: 
+- admin: authentication, authorization. Access to this database is required for some administrative operations.
+- local: stores data specific to a single server.
+- config: shared MongoDB clusters use the config database to store information about each shard.
+
+#### Data Types
+
+**Basic Data Types**
+
+Documents in MongoDB can be thought of as "JSON-like" in that they are conceptual similar to objects in Javascript, but with more type support
+
+```json
+// Null
+{"x": null}
+
+// Boolean
+{"x": true}
+
+// Number
+{"x": 3.14}
+{"x": 3}
+{"x": NumberInt("3")} // 32 bit
+{"x": NumberLong("3")} // 64 bit
+
+// String
+{"x": "foobar"}
+
+// Date
+// MongoDB stores dates as 64-bit integers representing milliseconds since the Unix epoch
+{"x": new Date()}
+
+// Regular expression
+{"x": /foobar/i}
+
+// Array
+{"x": ["a", "b", "c"]}
+
+// Embedded document
+// Documents can contain entire documents embedded as values in a parent document
+{"x": {"foo": "bar"}}
+
+// ObjectID
+// An object ID is a 12 byte ID for documents
+{"x": ObjectId()}
+
+// Binary data
+Binary data is a string of arbitrary bytes. It cannot be manipulated from the shell.
+
+// Code
+MongoDB also makes it possible to store arbitrary JavaScript in queries and documents:
+{"x": function() {}}
+```
+
+**Dates**
+
+In JavaScript, the Date class is used for MongoDB's data type. When creating a new Date object, always call new Date(), not just Date(). Calling the constructor as a function returns a string representation of the date, not an actual Date object. This is not MongoDB's choice; it is how JS works. If you are not careful to always use the Date constructor, you can end up with a mishmash of strings and dates.
+
+
 ### Chapter 3: Creating, Updating and Deleting Documents
 
 ### Chapter 4: Querying

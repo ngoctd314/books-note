@@ -1114,7 +1114,7 @@ go func() {
 	m.Lock()
 	defer m.Unlock()
 
-	m++
+	i++
 }()
 
 wg.Wait()
@@ -1125,7 +1125,77 @@ This example doesn't lead to a data race. Yet, it has a race condition. A race c
 
 ## 27. The Go memory model
 
-The Go memory model is specification that defines the conditions under which a read from a variable in one goroutine can be guaranteed to happen after a write to the same variable in a different goroutine.
+The Go memory model is a specification that defines the conditions under which a read from a variable in one goroutine can be guaranteed to happen after a write to the same variable in different goroutine. Said differently, the guarantees that developers should have in mind to avoid data races and force a deterministic output.
+
+- Creating a goroutine happens before the goroutine's execution begins. Therefore, reading a variable and then spinning a new goroutine up that write to this variable doesn't lead to a data race.
+```go
+i := 0
+go func() {
+    i++
+}()
+```
+
+- Conversely, the exit of a goroutine isn't guaranteed to happen before any event. Thus, the following example has a data race: 
+
+```go
+i := 0
+go func() {
+    i++
+}()
+fmt.Println(i)
+```
+Again, if we want to prevent the data race from happening, we should synchronize these goroutines.
+
+- A send on a channel happens before the corresponding receive from that channel completes. In the next example, a parent goroutine increments a variable before a send while another goroutine reads it after a channel read.
+
+```go
+i := 0
+ch := make(chan struct{})
+go func() {
+    <- ch
+    fmt.Println(i)
+}()
+i++
+ch <- struct{}{}
+```
+
+- Closing a channel happens before a receive of this closure.
+
+```go
+i := 0
+ch := make(chan struct{})
+go func() {
+    <- ch
+    fmt.Println(i)
+}()
+i++
+close(ch)
+```
+
+Below example leads to a data race. fmt.Println can output 0 or 1.
+```go
+i := 0
+ch := make(chan struct{}, 1)
+go func() {
+    i = 1
+    <- ch
+}()
+ch <- struct{}{} // non-blocking
+fmt.Println(i)
+```
+
+Below example leads to data race-free
+```go
+i := 0 
+ch := make(chan struct{})
+go func() { 
+    i = 1
+    <-ch
+}()
+ch <- struct{}{}
+fmt.Println(i)
+```
+Write guaranteed happen before read. A receive from an unbuffered channel happens before a send, then write i will always occur before read.
 
 ## 28. Not understand the concurrency impacts of a workload type
 
