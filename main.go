@@ -1,7 +1,7 @@
 package main
 
 import (
-	"books-note/Mongodb-The-Definitive-Guide/chapter4"
+	"books-note/Mongodb-The-Definitive-Guide/modeling"
 	"context"
 	"time"
 )
@@ -34,5 +34,7 @@ func main() {
 	// chapter4.Find(ctx)
 	// chapter4.Projection(ctx)
 	// chapter4.QueryCondition(ctx)
-	chapter4.OrQuery(ctx)
+	// chapter4.OrQuery(ctx)
+	_ = ctx
+	modeling.Fn()
 }
