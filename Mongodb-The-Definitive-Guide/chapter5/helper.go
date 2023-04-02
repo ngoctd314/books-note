@@ -1,4 +1,4 @@
-package chapter4
+package chapter5
 
 import (
 	"context"
@@ -20,10 +20,10 @@ func getCollection(ctx context.Context) *mongo.Collection {
 		log.Fatal("ping mongodb error:", err)
 	}
 
-	collection := client.Database("learning").Collection("querying")
+	collection := client.Database("learning").Collection("indexes")
 
 	// drop before test
-	collection.Drop(ctx)
+	// collection.Drop(ctx)
 
 	return collection
 

@@ -72,6 +72,29 @@ func OrQuery(ctx context.Context) {
 // NotQuery ...
 // $not is a metaconditional: it can be applied on top of any other criteria.
 func NotQuery(ctx context.Context) {
-	// collection := getCollection(ctx)
+	collection := getCollection(ctx)
 
+	// Insert a document
+	_, err := collection.InsertOne(ctx, bson.M{"age": 23, "name": "ngoctd"})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Find a document
+	var val1 any
+	result := collection.FindOne(ctx, bson.D{{Key: "age", Value: 23}})
+	result.Decode(&val1)
+	log.Println(val1)
+
+	// Find a document with $not operator
+	result = collection.FindOne(ctx, bson.D{{Key: "age", Value: bson.D{{Key: "$gte", Value: 23}}}})
+	var val2 any
+	result.Decode(&val2)
+	log.Println(val2)
+
+	// Find a document with $not operator
+	result = collection.FindOne(ctx, bson.D{{Key: "age", Value: bson.D{{Key: "$not", Value: bson.D{{Key: "$gte", Value: 23}}}}}})
+	var val3 any
+	result.Decode(&val3)
+	log.Println(val3)
 }
