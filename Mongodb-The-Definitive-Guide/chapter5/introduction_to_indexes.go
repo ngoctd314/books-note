@@ -30,14 +30,12 @@ func Indexes(ctx context.Context) {
 	// 	}
 	// }
 
-	/*
-		Creating an Index
-		indexes have their price: write operations (inserts, updates and deletes) that modify an indexes field will take longer.
-		This is because in addition to updating the document, MongoDB has to update indexes when you data changes.
-		Typocally, the tradeoff is worth it. The tricky part becomes figuring out which fields to index.
+	// Creating an Index
+	// indexes have their price: write operations (inserts, updates and deletes) that modify an indexes field will take longer.
+	// This is because in addition to updating the document, MongoDB has to update indexes when you data changes.
+	// Typocally, the tradeoff is worth it. The tricky part becomes figuring out which fields to index.
 
-		To choose which fields to create indexes for, look through your frequent queries and queries that need to be fast and try to find a common set of keys from those.
-	*/
+	// To choose which fields to create indexes for, look through your frequent queries and queries that need to be fast and try to find a common set of keys from those.
 	createIndexResult, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys: bson.M{"username": 1},
 	})
