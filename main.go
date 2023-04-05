@@ -1,14 +1,21 @@
 package main
 
-import (
-	"books-note/Mongodb-The-Definitive-Guide/chapter5"
-	"context"
-	"time"
-)
+import "log"
 
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*100)
-	defer cancel()
+	ch := make(chan struct{})
+	log.Println(SafeClose(ch))
+}
 
-	chapter5.Indexes(ctx)
+func SafeClose(ch chan struct{}) (justClosed bool) {
+	defer func() {
+		if recover() != nil {
+			// The return result can be altered
+			// in a defer function call
+			justClosed = false
+		}
+	}()
+
+	close(ch)
+	return true // <=> justClosed = true; return
 }
