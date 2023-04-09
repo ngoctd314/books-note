@@ -23,7 +23,7 @@ func getCollection(ctx context.Context) *mongo.Collection {
 	collection := client.Database("learning").Collection("indexes")
 
 	// drop before test
-	// collection.Drop(ctx)
+	collection.Drop(ctx)
 
 	return collection
 

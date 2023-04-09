@@ -1,10 +1,8 @@
 package main
 
 import (
-	"books-note/Mongodb-The-Definitive-Guide/chapter5"
-	"context"
+	_ "net/http/pprof"
 )
 
 func main() {
-	chapter5.Indexes(context.Background())
 }

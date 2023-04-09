@@ -2,18 +2,15 @@ package chapter5
 
 import (
 	"context"
-	"fmt"
-	"log"
 	"math/rand"
 	"time"
-
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Indexes ...
 func Indexes(ctx context.Context) {
 	collection := getCollection(ctx)
 	rand.Seed(time.Now().UnixNano())
+	_ = collection
 
 	// wg := sync.WaitGroup{}
 	// wg.Add(6)
@@ -56,20 +53,20 @@ func Indexes(ctx context.Context) {
 
 	// collection.Indexes().DropAll(ctx)
 	// query with and without indexes
-	now := time.Now()
-	// opts := options.Find().SetSort(bson.M{"age": 1})
-	cnt := 0
-	cur, err := collection.Find(ctx, bson.M{"age": bson.M{"$gt": 20}})
-	// cur, err := collection.Find(ctx, bson.M{"age": 21})
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("time query:", time.Since(now)) // 21.5s, 13.7ms
-	for cur.Next(ctx) {
-		// log.Println(cur.Current)
-		cnt++
-	}
-	fmt.Println(cnt)
+	// now := time.Now()
+	// // opts := options.Find().SetSort(bson.M{"age": 1})
+	// cnt := 0
+	// cur, err := collection.Find(ctx, bson.M{"age": bson.M{"$gt": 20}})
+	// // cur, err := collection.Find(ctx, bson.M{"age": 21})
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// log.Println("time query:", time.Since(now)) // 21.5s, 13.7ms
+	// for cur.Next(ctx) {
+	// 	// log.Println(cur.Current)
+	// 	cnt++
+	// }
+	// fmt.Println(cnt)
 
 	// log.Println("time query:", time.Since(now)) // 21.5s, 13.7ms
 	// multi-key map passed in for ordered parameter keys
@@ -112,4 +109,11 @@ The server maintains a of query plans. A winning plan is stored in the cache for
 
 ## Using Compound Indexes
 Compound indexes are a little more complicated to think about than single-key indexes, but they are very powerful.
+
+To be sure we get the right indexes in place,
+it is necessary to test our indexes under some real-world workloads and make adjustments from there>
+
+The index is going to minimize the number of records scanned. We need to consider selectivity
+in light of all operations necessary to satisfy a query, and sometimes make tradeoffs.
+
 */
