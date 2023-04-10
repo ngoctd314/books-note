@@ -29,4 +29,9 @@ Which tasks can be completed with an aggregation pipeline?
 ## Lession 2: Using $match and $group stages in MongoDB aggregation pipeline
 
 **$match**
-Filter for documents matching criteria
+Filter for documents matching criteria.
+Place as early as possible in the pipeline so it can use indexes.
+Reduces the number of documents.
+
+**$group**
+Create a single document for each distinct value.
