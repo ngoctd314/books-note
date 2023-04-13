@@ -26,7 +26,7 @@ Which tasks can be completed with an aggregation pipeline?
 - You can group documents together using aggregation, but you cann't change those documents in the database
 - You can calculate totals from a group of documents by using aggregation
 
-## Lession 2: Using $match and $group stages in MongoDB aggregation pipeline
+## Lesson 2: Using $match and $group stages in MongoDB aggregation pipeline
 
 **$match**
 Filter for documents matching criteria.
@@ -35,3 +35,8 @@ Reduces the number of documents.
 
 **$group**
 Create a single document for each distinct value.
+
+## Lesson 3: Using $sort and $limit stages in a MongoDB aggregation pipeline
+
+**$sort**
+Sorts all input documents and passes them through pipeline in sorted order
