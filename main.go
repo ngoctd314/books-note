@@ -1,42 +1,22 @@
 package main
 
 import (
-	"books-note/Mongodb-The-Definitive-Guide/chapter7"
-	"context"
+	"fmt"
 	"log"
 	_ "net/http/pprof"
+	"sync"
 )
 
-type Slice []bool
-
-func (s Slice) Length() int {
-	return len(s)
-}
-func (s Slice) Modify(i int, x bool) {
-	s[i] = x // panic if s is nil
-}
-func (p *Slice) DoNothing() {}
-
-func (p *Slice) Append(x bool) {
-	if p == nil {
-		p = new(Slice)
-		v := []bool{x}
-		*p = v
-		return
-	}
-	*p = append(*p, x)
-}
-
 func main() {
-	chapter7.Aggregate(context.Background())
-}
+	log.SetFlags(0)
 
-type person struct{}
-
-func (p person) Run() {
-	log.Println("RUN")
-}
-
-type runner interface {
-	Run()
+	x := 0
+	fn := func() {
+		x++
+	}
+	oc := sync.Once{}
+	for i := 0; i < 1e6; i++ {
+		go oc.Do(fn)
+	}
+	fmt.Println(x)
 }

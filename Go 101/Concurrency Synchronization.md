@@ -15,4 +15,28 @@ For an addressable Once value o, the method call o.Do(), which is a shorthand of
 Generally, a Once value is used to ensure that a piece of code will be executed exactly once in concurrent programming.
 
 ```go
+func main() {
+	log.SetFlags(0)
+
+	x := 0
+	doSomething := func() {
+		x++
+		log.Println("Hello")
+	}
+
+	var wg sync.WaitGroup
+	var once sync.Once
+	for i := 0; i < 5; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			once.Do(doSomething)
+			log.Println("world!")
+		}()
+	}
+
+	wg.Wait()
+	log.Println("x =", x) // x = 1
+}
 ```
+## The sync.Mutex and sync.RWMutex Types
